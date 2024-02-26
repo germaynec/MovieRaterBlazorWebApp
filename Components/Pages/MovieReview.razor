@@ -1,0 +1,75 @@
+@page "/MovieReview/{Id}"
+@attribute [StreamRendering(true)]
+
+@inject IMovieReviewService MovieReviewService
+
+<style>
+    /* Fancy Styles */
+    .movie-review-title {
+        font-family: 'Arial', sans-serif;
+        font-size: 2.5em;
+        color: #4CAF50;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .loading-message {
+        font-style: italic;
+        color: #777;
+        font-size: 1.5em;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .movie-details-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .movie-image {
+        width: 50%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .movie-review {
+        font-family: 'Georgia', serif;
+        font-size: 1.2em;
+        color: #333;
+        margin-left: 30px;
+    }
+</style>
+
+<h3 class="movie-review-title">Movie Review for @MovieItem?.Title</h3>
+
+@if (MovieItem == null)
+{
+    <h3 class="loading-message">Loading...</h3>
+}
+else
+{
+    <div class="movie-details-container">
+        <img class="movie-image" src="@MovieItem?.ImageUrl" alt="@MovieItem?.Title" />
+        <div class="movie-review">@MovieItem?.Review</div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    private MovieModel? MovieItem { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+
+        if (!string.IsNullOrEmpty(Id))
+        {
+            MovieItem = MovieReviewService?.GetMovieById(int.Parse(Id));
+        }
+    }
+}
